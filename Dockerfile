@@ -1,19 +1,17 @@
-FROM python:3.12-slim
+# Use Python image
+FROM python:3.11-slim
 
-# Create non-root user (production best practice)
-RUN useradd -m appuser
-
+# Set working directory
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy files
 COPY . .
 
-# Permissions
-RUN chown -R appuser:appuser /app
-USER appuser
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+# Expose port (important!)
+EXPOSE 10000
 
-CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:8000", "app:app"]
+# Run app
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10000"]
